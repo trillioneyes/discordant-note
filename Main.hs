@@ -50,7 +50,7 @@ draw GS{shield, now} r = do
   rendererDrawColor r $= shieldColor shield now
   clear r
   rendererDrawColor r $= V4 0 0 0 200
-  let shieldHeight = round $ evalShield shield now * 5
+  let shieldHeight = round $ evalShield shield now * 15
   fillRect r (Just (Rectangle (P (V2 310 200)) (V2 20 shieldHeight)))
 
 initialEnemies :: [Enemy]

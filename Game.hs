@@ -6,7 +6,7 @@ type Time = Double
 data Tone = T { freq :: Double, amp :: Double, off :: Double }
 
 eval :: Tone -> Time -> Double
-eval T{freq, amp, off} t = cos (freq * (t + off) / pi) * amp
+eval T{freq, amp, off} t = cos (2 * pi * freq * t + off) * amp
 
 evalShield :: [Tone] -> Time -> Double
 evalShield shield t = sum (map (flip eval t) shield)
@@ -38,11 +38,13 @@ step i GS{shield, enemies, lastTap, now} delta = newState where
   newNow = now + delta
 
 stepShield :: Input -> Time -> Time -> Time -> [Tone] -> [Tone]
-stepShield i lastTap now delta shield = tapTone i lastTap now ++ map (decay delta) shield
+stepShield i lastTap now delta shield = tapTone i lastTap now ++ updateExisting shield
+  where updateExisting = filter bigEnough . map (decay delta)
+        bigEnough (T {amp}) = amp >= 0.01
 
 decay :: Time -> Tone -> Tone
 decay delta T{freq, amp, off} = T{freq, off, amp = amp*factor}
-  where factor = 0.99**(delta*freq)
+  where factor = 0.85**(delta*freq)
 
 tapTone :: Input -> Time -> Time -> [Tone]
 tapTone Tap lastTap now = [T{freq = 1/(now - lastTap), off = lastTap, amp = 1}]
