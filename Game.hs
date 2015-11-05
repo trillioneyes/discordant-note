@@ -47,7 +47,7 @@ decay delta T{freq, amp, off} = T{freq, off, amp = amp*factor}
   where factor = 0.85**(delta*freq)
 
 tapTone :: Input -> Time -> Time -> [Tone]
-tapTone Tap lastTap now = [T{freq = 1/(now - lastTap), off = lastTap, amp = 1}]
+tapTone Tap lastTap now = [T{freq = 1/(now - lastTap), off = 0, amp = 1}]
 tapTone Wait _ _ = []
 
 moveEnemy :: Double -> Time -> Time -> Enemy -> Enemy
