@@ -8,6 +8,9 @@ data Tone = T { freq :: Double, amp :: Double, off :: Double }
 eval :: Tone -> Time -> Double
 eval T{freq, amp, off} t = cos (freq * (t + off) / pi) * amp
 
+evalShield :: [Tone] -> Time -> Double
+evalShield shield t = sum (map (flip eval t) shield)
+
 data Enemy = Bolt Tone Double Double
 
 data GameState =
@@ -30,7 +33,7 @@ step i GS{shield, enemies, lastTap, now} delta = newState where
                  now = newNow}
   newShield = stepShield i lastTap newNow delta shield
   newEnemies = map (moveEnemy pointShield newNow delta) enemies
-  pointShield = sum (map (flip eval newNow) newShield)
+  pointShield = evalShield newShield newNow
   newLastTap = if tapped i then newNow else lastTap
   newNow = now + delta
 
